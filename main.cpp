@@ -298,7 +298,7 @@ int main(int argc, char **argv) {
         // This is a temporary solution to determine if the input file is an image or video 
         // cv::Mat testFrame;
         std::string ext = file.extension();
-        bool validImage = (ext == ".png");
+        bool validImage = (ext == ".png") || (ext == ".jpg") || (ext == ".tiff");
 
         if (!validImage) { // If the file is a video
             cv::VideoCapture cap(file.string());
