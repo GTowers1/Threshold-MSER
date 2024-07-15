@@ -87,7 +87,9 @@ struct Options
     bool fullOutput;
     int left;
     int right;
+    bool verboseMode;
 };
+
 
 bool containExt(const std::string s, std::string arr[], int len);
 
