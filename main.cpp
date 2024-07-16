@@ -368,6 +368,10 @@ int main(int argc, char **argv) {
         // cv::Mat testFrame;
         std::string ext = file.extension();
         bool validImage = (ext == ".png") || (ext == ".jpg") || (ext == ".tiff");
+	
+	if (options.verboseMode && validImage) {
+			std::cout<<"Your img "<<file<<" is valid\n"<<std::endl;
+	}
 
         if (!validImage) { // If the file is a video
             cv::VideoCapture cap(file.string());
@@ -376,7 +380,10 @@ int main(int argc, char **argv) {
                 continue;
             }
 
-	        int image_stack_counter = 0;
+	    if (options.verboseMode) {
+	    	std::cout<<"your video "<<file<<" is valid\n"<<std::endl;
+	    }
+	    int image_stack_counter = 0;
             int totalFrames = cap.get(cv::CAP_PROP_FRAME_COUNT);
 
             #pragma omp parallel for
@@ -419,6 +426,9 @@ int main(int argc, char **argv) {
                 std::cerr << "Error reading the image file " << file.string() << std::endl;
                 continue;
             }
+	    if(options.verboseMode){
+	    	std::cout<<"Img: "<<imgRaw<<" has been grayscales"<<std::endl;
+	    }
             // TODO: Add the ability to concatenate frames like with videos
 
             std::string imgName = fileName;
@@ -433,6 +443,10 @@ int main(int argc, char **argv) {
             // Segment the grayscale image and save its' crops.
             cv::Mat imgCorrect;
             std::vector<cv::Rect> bboxes;
+	    
+	    if (options.verboseMode) {
+	    	std::cout<<"Segmenting..."<<std::endl;
+	    }
             segmentImage(imgGray, imgCorrect, bboxes, options);
             saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options);
 

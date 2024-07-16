@@ -321,6 +321,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
         if ( area < options.minArea || area > options.maxArea )
             continue;
 
+	//grant maybe this is what is getting the weird value
         // Re-scale the crop of the image after getting the measurement data written to a file
         cv::Rect scaledBbox = rescaleRect(bboxes[k], 1.2);
 
