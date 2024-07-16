@@ -54,6 +54,9 @@ void helpMsg(std::string executable, Options options) {
 
 	<< std::left << std::setw(30) << "  -V, --verbose"<<" Enable Verbose Mode (Default: "<<options.verboseMode<<")\n"
 
+	<< std::left << std::setw(30) << "  -VV, --verbosePlus"<<" Enable VerbosePlus Mode [More VERBOSE] (Default: "<<options.verboseModePlus<<")\n"
+
+
         << std::left << std::setw(30) << "  -i, --input" << "Directory of video files to segment\n"
 
         << std::left << std::setw(30) << "  -o, --output-directory" << "Output directory where segmented images should be stored (Default: " << options.outputDirectory << ")\n"
@@ -109,6 +112,7 @@ int main(int argc, char **argv) {
     options.left = 0;
     options.right = 0;
     options.verboseMode = false;
+    options.verboseModePlus = false;
 
     // TODO: more robust options with std::find may be worth it
     if (argc == 1) {
@@ -136,10 +140,17 @@ int main(int argc, char **argv) {
         	}
 		else if(strcmp(argv[i], "-V") == 0 || strcmp(argv[i], "--verbose") == 0){
             		// toggle
-            		options.fullOutput = true; 
+            		options.verboseMode = true; 
 
             		i+=1;
 		}
+		else if(strcmp(argv[i], "-VV") == 0 || strcmp(argv[i], "--verbosePlus") == 0){
+            		// toggle
+            		options.verboseModePlus = true; 
+
+            		i+=1;
+		}
+
 		else if (strcmp(argv[i], "-i") == 0 || strcmp(argv[i], "--input") == 0) {
             		options.input = argv[i + 1];
             		if ( !fs::exists(options.input) ) {
@@ -426,9 +437,6 @@ int main(int argc, char **argv) {
                 std::cerr << "Error reading the image file " << file.string() << std::endl;
                 continue;
             }
-	    if(options.verboseMode){
-	    	std::cout<<"Img: "<<imgRaw<<" has been grayscales"<<std::endl;
-	    }
             // TODO: Add the ability to concatenate frames like with videos
 
             std::string imgName = fileName;

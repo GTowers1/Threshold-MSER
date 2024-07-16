@@ -333,6 +333,29 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	    // Draw the cropped frames on the image to be saved
 	    cv::rectangle(imgBboxes, bboxes[k], cv::Scalar(0, 0, 255));
 	    cv::rectangle(imgBboxes, scaledBbox, cv::Scalar(255, 0, 0));
+	
+	if (options.verboseModePlus) {
+		std::cout<<"===== Boxed Image =====\n"<<std::endl;
+			
+		std::cout<<"File: "<<correctImgFile<<"\n"<<std::endl;
+
+		std::cout<<"Area: "<<area<<"\n"<<std::endl;
+
+		std::cout<<"Major: "<<major<<"\n"<<std::endl;
+
+		std::cout<<"Minor: "<<minor<<"\n"<<std::endl;
+
+		std::cout<<"Perimeter: "<<perimeter<<"\n"<<std::endl;
+
+		std::cout<<"X: "<<x<<"\n"<<std::endl;
+
+		std::cout<<"Y: "<<y<<"\n"<<std::endl;
+
+		std::cout<<"Mean: "<<mean<<"\n"<<std::endl;
+
+		std::cout<<"Height: "<<height<<"\n"<<std::endl;
+
+	}
 
         // Write the image data to the measurement file
         // Format: img,area,major,minor,perimeter,x,y,mean,height

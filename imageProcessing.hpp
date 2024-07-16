@@ -88,6 +88,7 @@ struct Options
     int left;
     int right;
     bool verboseMode;
+    bool verboseModePlus;
 };
 
 
