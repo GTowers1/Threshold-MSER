@@ -267,13 +267,16 @@ void contourBbox(const cv::Mat& img, std::vector<cv::Rect>& bboxes, int threshol
 }
 
 
-void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Rect>& bboxes, std::string imgDir, std::string imgName, std::ofstream& measurePtr, Options options) {
+void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Rect>& bboxes, std::string imgDir, std::string imgName, std::ofstream& measurePtr, Options options, std::ofstream& bboxPtr) {
     cv::Rect imgRect(0, 0, imgCorrect.cols, imgCorrect.rows); // use imgRect to make sure box doesn't go off the edge
 
 	// Create crop directories
 	std::string correctCropDir = imgDir + "/corrected_crop";
 	std::string frameDir = imgDir + "/frame/";
 
+
+    fs::create_directory(bboxStats);
+	
     fs::create_directory(correctCropDir);
     if ( options.fullOutput ) {
         fs::create_directory(frameDir);
@@ -300,6 +303,12 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
         float height = bboxes[k].height;
         float width = bboxes[k].width;
 
+	//add a verbose ++ for the actual bb data maybe	
+	//if (options.verboseModePlus) {
+
+	//	std::cout<<""<<std::endl;
+	
+	//}	
         // Get mean pixel value for the crop
         cv::Mat imgCropUnscaled = cv::Mat(imgCorrect, bboxes[k] & imgRect);
         double mean = cv::sum(imgCropUnscaled)[0] / (height * width);
@@ -353,7 +362,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 
 		std::cout<<"Mean: "<<mean<<"\n"<<std::endl;
 
-		std::cout<<"Height: "<<height<<"\n"<<std::endl;
+		std::cout<<"Height: "<<height<<"\n\n"<<std::endl;
 
 	}
 
@@ -362,7 +371,9 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
         #pragma omp critical(write)
         {
             measurePtr << correctImgFile << "," << area << "," << major << "," << minor << "," 
-             << perimeter << "," << x << "," << y << "," << mean << "," << height << std::endl; 
+             << perimeter << "," << x << "," << y << "," << mean << "," << height << std::endl;
+	    	
+	    bboxPtr << x <<","<< y << ","<<height << ","<<width <<std::endl;
         }
     }
 

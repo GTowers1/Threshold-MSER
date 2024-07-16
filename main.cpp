@@ -368,6 +368,11 @@ int main(int argc, char **argv) {
         fs::path file = files[i];
         std::string fileName = file.stem();
 
+	//create csv for bounding box data
+	std::string bboxSheet = measureDir + "/" + fileName+"_bboxData.csv";
+	std::ofstream bboxPtr(bboxSheet);
+	bboxPtr << "x, y, width, height" << std::endl;
+	
         // Create a measurement file to save crop info to
         std::string measureFile = measureDir + "/" + fileName + ".csv";
         std::ofstream measurePtr(measureFile);
@@ -420,7 +425,7 @@ int main(int argc, char **argv) {
                 cv::Mat imgCorrect;
                 std::vector<cv::Rect> bboxes;
                 segmentImage(imgGray, imgCorrect, bboxes, options);
-                saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options);
+                saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options, bboxPtr);
 
                 imgGray.release();
                 imgCorrect.release();
@@ -456,7 +461,7 @@ int main(int argc, char **argv) {
 	    	std::cout<<"Segmenting..."<<std::endl;
 	    }
             segmentImage(imgGray, imgCorrect, bboxes, options);
-            saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options);
+            saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options, bboxPtr);
 
             imgRaw.release();
             imgGray.release();
