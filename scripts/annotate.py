@@ -73,9 +73,9 @@ def draw_bounding_boxes():
             rows.append(row)
 
     for row in rows:
-        box = row.split()
+        
 
-        x_center, y_center, w, h = float(box[0])*width, float(box[1])*height, float(box[2])*width, float(box[3])*height
+        x_center, y_center, w, h = float(row[0])*width, float(row[1])*height, float(row[2])*width, float(row[3])*height
 
         x1 = round(x_center-w/2)
         y1 = round(y_center-h/2)
@@ -91,5 +91,9 @@ def draw_bounding_boxes():
 
     #
 
-draw_bounding_boxes()
+
+
+if __name__ == '__main__':
+
+    draw_bounding_boxes()
 
