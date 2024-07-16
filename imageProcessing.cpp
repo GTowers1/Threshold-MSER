@@ -275,7 +275,6 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	std::string frameDir = imgDir + "/frame/";
 
 
-    fs::create_directory(bboxStats);
 	
     fs::create_directory(correctCropDir);
     if ( options.fullOutput ) {
