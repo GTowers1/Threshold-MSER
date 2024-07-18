@@ -13,7 +13,7 @@ def plot_one_box(x, image, line_thickness=None):
     color = [random.randint(0, 255) for _ in range(3)]
     c1, c2 = (int(x[0]), int(x[1])), (int(x[2]), int(x[3]))
     cv2.rectangle(image, c1, c2, color, thickness=tl, lineType=cv2.LINE_AA)
-    print("ahh")
+    print(c1," ",c2, " ", color)
     return
 
 
@@ -57,8 +57,9 @@ def draw_bounding_boxes():
     # get values for each line in the data
     #rows is an array that stores a list of bboxes [x, y, width, height
     rows = []
-    
-    save_file_path = os.path.join(outputPath, '%s.png' % (inputPath))
+
+    file_name = os.path.basename(inputPath)
+    save_file_path = os.path.join(outputPath, file_name)
     print(save_file_path)
 
     image = cv2.imread(inputPath)
@@ -92,7 +93,8 @@ def draw_bounding_boxes():
 
          
 
-        cv2.imwrite(save_file_path, image)
+    cv2.imwrite(save_file_path, image)
+    print("Image with bounding boxes saved to:", save_file_path)
     #take values and calculate a box to annotate
 
     #use annotation tool to add box to og img
