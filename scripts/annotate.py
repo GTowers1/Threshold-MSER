@@ -10,11 +10,11 @@ def plot_one_box(x, image, line_thickness=None):
     # Plots one bounding box on image img
     tl = line_thickness or round(
         0.002 * (image.shape[0] + image.shape[1]) / 2) + 1  # line/font thickness
-    color = [random.randint(0, 255) for _ in range(3)]
+    color = (255,255,255)
     c1, c2 = (int(x[0]), int(x[1])), (int(x[2]), int(x[3]))
     cv2.rectangle(image, c1, c2, color, thickness=tl, lineType=cv2.LINE_AA)
-    print(c1," ",c2, " ", color)
-    return
+
+    print("Plotting box: c1 =", c1, "c2 =", c2, "color =", color, "line_thickness =", tl)
 
 
 def draw_bounding_boxes():
@@ -63,7 +63,10 @@ def draw_bounding_boxes():
     print(save_file_path)
 
     image = cv2.imread(inputPath)
-    #print(image, " image\n")
+    if image is None:
+        print("Failed to read image from path:", inputPath)
+        return 1
+
 
     try:
         height, width, channels = image.shape
@@ -88,6 +91,8 @@ def draw_bounding_boxes():
         y1 = round(y_center-h/2)
         x2 = round(x_center+w/2)
         y2 = round(y_center+h/2)
+
+        print("Bounding box coordinates:", x1, y1, x2, y2,"\n")
 
         plot_one_box([x1,y1,x2,y2], image, line_thickness=None)
 
