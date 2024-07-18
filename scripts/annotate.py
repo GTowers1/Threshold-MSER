@@ -55,8 +55,11 @@ def draw_bounding_boxes():
     # get values for each line in the data
     #rows is an array that stores a list of bboxes [x, y, width, height
     rows = []
+    
+    save_file_path = os.path.join(outputPath, '%s.png' % (inputPath))
 
     image = cv2.imread(inputPath)
+    print(image, " image\n")
 
     try:
         height, width, channels = image.shape
@@ -84,7 +87,9 @@ def draw_bounding_boxes():
 
         plot_one_box([x1,y1,x2,y2], image, line_thickness=None)
 
-        cv2.imwrite(outputPath, image)
+                
+
+        cv2.imwrite(save_file_path, image)
     #take values and calculate a box to annotate
 
     #use annotation tool to add box to og img
