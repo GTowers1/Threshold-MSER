@@ -13,6 +13,8 @@ def plot_one_box(x, image, line_thickness=None):
     color = [random.randint(0, 255) for _ in range(3)]
     c1, c2 = (int(x[0]), int(x[1])), (int(x[2]), int(x[3]))
     cv2.rectangle(image, c1, c2, color, thickness=tl, lineType=cv2.LINE_AA)
+    print("ahh")
+    return
 
 
 def draw_bounding_boxes():
@@ -57,9 +59,10 @@ def draw_bounding_boxes():
     rows = []
     
     save_file_path = os.path.join(outputPath, '%s.png' % (inputPath))
+    print(save_file_path)
 
     image = cv2.imread(inputPath)
-    print(image, " image\n")
+    #print(image, " image\n")
 
     try:
         height, width, channels = image.shape
@@ -87,7 +90,7 @@ def draw_bounding_boxes():
 
         plot_one_box([x1,y1,x2,y2], image, line_thickness=None)
 
-                
+         
 
         cv2.imwrite(save_file_path, image)
     #take values and calculate a box to annotate
