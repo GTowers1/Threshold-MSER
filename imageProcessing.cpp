@@ -391,6 +391,9 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	    cv::imwrite(correctedFrame, imgCorrect);
 	    cv::imwrite(originalFrame, img);
 	    cv::imwrite(bboxFrame, imgBboxes);
+	    if (options.verboseMode || options.verboseModePlus) {
+	    	std::cout<<"------\nbbox frame: "<<bboxFrame<<"img Bboxes: \n------\n"<<imgBboxes<<std::endl;
+	    }
     }
 }
 
