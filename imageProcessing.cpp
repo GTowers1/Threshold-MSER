@@ -389,7 +389,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	    std::string bboxFrame = frameDir + "/" + imgName + "_bboxes.tif";
 
 	    //didnt get here
-	    if (options.verboseMode || options.verboseModePlus) {
+	    if (options.verboseMode) {
 	    	std::cout<<"------\nbbox frame: "<<bboxFrame<<"img Bboxes: \n------\n"<<imgBboxes<<std::endl;
 	    }
 	    cv::imwrite(correctedFrame, imgCorrect);
