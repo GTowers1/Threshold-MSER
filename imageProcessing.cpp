@@ -338,10 +338,9 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
         cv::Mat imgCropCorrect = cv::Mat(imgCorrect, scaledBbox & imgRect);
         cv::imwrite(correctImgFile, imgCropCorrect);
 
-	    // Draw the cropped frames on the image to be saved
-	    cv::rectangle(imgBboxes, bboxes[k], cv::Scalar(0, 0, 255));
-	    std::cout<<"Red Boxes: "<<bboxes[k]<<" \n"<<std::endl;
-	    cv::rectangle(imgBboxes, scaledBbox, cv::Scalar(255, 0, 0));
+	// Draw the cropped frames on the image to be saved
+	cv::rectangle(imgBboxes, bboxes[k], cv::Scalar(0, 0, 255));
+	cv::rectangle(imgBboxes, scaledBbox, cv::Scalar(255, 0, 0));
 	
 	if (options.verboseModePlus) {
 		std::cout<<"===== Boxed Image =====\n"<<std::endl;
@@ -363,6 +362,8 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 		std::cout<<"Mean: "<<mean<<"\n"<<std::endl;
 
 		std::cout<<"Height: "<<height<<"\n\n"<<std::endl;
+
+		std::cout<<"Bboxes@k(redboxes)"<<bboxes[k]<<"\n"<<std::endl;
 
 	}
 
