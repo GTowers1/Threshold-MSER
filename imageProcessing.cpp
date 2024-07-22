@@ -363,8 +363,6 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 
 		std::cout<<"Height: "<<height<<"\n\n"<<std::endl;
 
-		std::cout<<"Bboxes@k(redboxes)"<<bboxes[k]<<"\n"<<std::endl;
-
 	}
 
         // Write the image data to the measurement file
