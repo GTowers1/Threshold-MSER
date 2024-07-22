@@ -340,6 +340,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 
 	    // Draw the cropped frames on the image to be saved
 	    cv::rectangle(imgBboxes, bboxes[k], cv::Scalar(0, 0, 255));
+	    std::cout<<"Red Boxes: "<<bboxes[k]<<" \n"<<std::endl;
 	    cv::rectangle(imgBboxes, scaledBbox, cv::Scalar(255, 0, 0));
 	
 	if (options.verboseModePlus) {
