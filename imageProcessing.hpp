@@ -275,6 +275,6 @@ void segmentImage(const cv::Mat& img, cv::Mat& imgCorrect,
  */
 void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, 
         std::vector<cv::Rect>& bboxes, std::string imgDir, 
-        std::string imgName, std::ofstream& measurePtr, Options options, std::ofstream& bboxPtr);
+        std::string imgName, std::ofstream& measurePtr, Options options, std::ofstream& bboxPtr, std::ofstream& yoloPtr);
 
 #endif

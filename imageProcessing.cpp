@@ -267,13 +267,14 @@ void contourBbox(const cv::Mat& img, std::vector<cv::Rect>& bboxes, int threshol
 }
 
 
-void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Rect>& bboxes, std::string imgDir, std::string imgName, std::ofstream& measurePtr, Options options, std::ofstream& bboxPtr) {
+void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Rect>& bboxes, std::string imgDir, std::string imgName, std::ofstream& measurePtr, Options options, std::ofstream& bboxPtr, std::ofstream& yoloPtr) {
     cv::Rect imgRect(0, 0, imgCorrect.cols, imgCorrect.rows); // use imgRect to make sure box doesn't go off the edge
 
 	// Create crop directories
 	std::string correctCropDir = imgDir + "/corrected_crop";
 	std::string frameDir = imgDir + "/frame/";
-
+    int test_w = img.cols;
+    int test_h = img.rows;
 
 	
     fs::create_directory(correctCropDir);
@@ -365,6 +366,11 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 
 	}
 
+
+	//var centerX = (results3[j].X+(results3[j].W/2))/img_w;
+	//var centerY = (results3[j].Y+(results3[j].H/2))/img_h
+	//to_string_value = cnames.indexOf(results3[j].CName) +" "+centerX+" "+centerY+" "+results3[j].W/img_w +" "+results3[j].H/img_h +"\n"
+	
         // Write the image data to the measurement file
         // Format: img,area,major,minor,perimeter,x,y,mean,height
         #pragma omp critical(write)
@@ -373,6 +379,8 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
              << perimeter << "," << x << "," << y << "," << mean << "," << height << std::endl;
 	    	
 	    bboxPtr << x <<","<< y << ","<<height << ","<<width <<std::endl;
+
+	    yoloPtr << (x + (width/2))/test_w <<","<< (y + (height/2))/test_h << ","<<(width/test_w) << ","<<(height/test_h) <<std::endl;
         }
     }
 
