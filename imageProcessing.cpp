@@ -380,7 +380,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	    	
 	    bboxPtr << x <<","<< y << ","<<height << ","<<width <<std::endl;
 
-	    yoloPtr << (x + (width/2))/test_w <<","<< (y + (height/2))/test_h << ","<<(width/test_w) << ","<<(height/test_h) <<std::endl;
+	    yoloPtr << 0 << " " << (x + (width/2))/test_w <<" "<< (y + (height/2))/test_h << " "<<(width/test_w) << " "<<(height/test_h) <<std::endl;
         }
     }
 
@@ -390,16 +390,11 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
     cv::waitKey(0);
     #endif
 
-	// Write full video frames to files
+    // Write full video frames to files
     if (options.fullOutput) {
 	    std::string correctedFrame = frameDir + "/" + imgName + "_corrected.tif";
 	    std::string originalFrame = frameDir + "/" + imgName + "_original.tif";
 	    std::string bboxFrame = frameDir + "/" + imgName + "_bboxes.tif";
-
-	    //didnt get here
-	    if (options.verboseMode) {
-	    	std::cout<<"------\nbbox frame: "<<bboxFrame<<"img Bboxes: \n------\n"<<imgBboxes<<std::endl;
-	    }
 	    cv::imwrite(correctedFrame, imgCorrect);
 	    cv::imwrite(originalFrame, img);
 	    cv::imwrite(bboxFrame, imgBboxes);

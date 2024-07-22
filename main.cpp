@@ -374,9 +374,9 @@ int main(int argc, char **argv) {
 	bboxPtr << "x, y, width, height" << std::endl;
 
 	//create csv for bounding box data
-	std::string yoloFormatSheet = measureDir + "/" + fileName+"_yoloFormat.csv";
+	std::string yoloFormatSheet = measureDir + "/" + fileName+"_yoloFormat.txt";
 	std::ofstream yoloPtr(yoloFormatSheet);
-	yoloPtr << "xcenter, ycenter, width, height" << std::endl;
+	// yoloPtr << "class xcenter ycenter width height" << std::endl;
 
         // Create a measurement file to save crop info to
         std::string measureFile = measureDir + "/" + fileName + ".csv";
@@ -388,7 +388,7 @@ int main(int argc, char **argv) {
         // This is a temporary solution to determine if the input file is an image or video 
         // cv::Mat testFrame;
         std::string ext = file.extension();
-        bool validImage = (ext == ".png") || (ext == ".jpg") || (ext == ".tiff");
+        bool validImage = (ext == ".png") || (ext == ".jpg") || (ext == ".jpeg") || (ext == ".tif") || (ext == ".gif");
 	
 	if (options.verboseMode && validImage) {
 			std::cout<<"Your img "<<file<<" is valid\n"<<std::endl;
