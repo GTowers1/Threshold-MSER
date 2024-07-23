@@ -89,6 +89,7 @@ struct Options
     int right;
     bool verboseMode;
     bool verboseModePlus;
+    std::string ogImg;
 };
 
 

@@ -90,7 +90,10 @@ void helpMsg(std::string executable, Options options) {
 
         << std::left << std::setw(30) << "  -l, --left-crop" << "Crop this many pixels off of the left side of the image\n"
 
-        << std::left << std::setw(30) << "  -r, --right-crop" << "Crop this many pixels off of the right side of the image" << std::endl;
+        << std::left << std::setw(30) << "  -r, --right-crop" << "Crop this many pixels off of the right side of the image\n"
+
+        << std::left << std::setw(30) << "  -O, --origin-img" << "Include the origional image to be used for writing boxes on frame (used in conjunction with the -f flag)" << std::endl;
+
 }
 
 int main(int argc, char **argv) {
@@ -113,6 +116,7 @@ int main(int argc, char **argv) {
     options.right = 0;
     options.verboseMode = false;
     options.verboseModePlus = false;
+    options.ogImg = "";
 
     // TODO: more robust options with std::find may be worth it
     if (argc == 1) {
@@ -288,6 +292,14 @@ int main(int argc, char **argv) {
             		options.right = std::stoi(argv[i+1]);
             		i+=2;
 		} 
+		else if (strcmp(argv[i], "-O") == 0 || strcmp(argv[i], "--origin-img") == 0) {
+            		options.ogImg = argv[i + 1];
+            		if ( !fs::exists(options.ogImg) ) {
+                		std::cerr << options.ogImg<< " does not exist." << std::endl;
+                		return 1;
+            		}
+            		i+=2;
+        	} 
 		else {
             		// Display invalid option message
             		std::cerr << argv[0] << ": invalid option \'" << argv[i] << "\'" <<

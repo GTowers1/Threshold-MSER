@@ -29,6 +29,8 @@
  */ 
 
 #include "imageProcessing.hpp"
+#include <cstddef>
+#include <cstring>
 #include <iostream>
 #include <fstream> // write output csv files
 #include <iomanip>  // std::setw
@@ -398,6 +400,11 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	    cv::imwrite(correctedFrame, imgCorrect);
 	    cv::imwrite(originalFrame, img);
 	    cv::imwrite(bboxFrame, imgBboxes);
+	    
+	    if (options.ogImg != "") {
+		std::string originPlusBoxes = frameDir + "/" + options.ogImg + "_originPlusBoxes.png";
+	    	cv::imwrite(originPlusBoxes, imgBboxes);
+	    }
 	   
     }
 }
