@@ -394,7 +394,9 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 
     // Write full video frames to files
     if (options.fullOutput) {
-	    std::cout<<"Hello in the if statment for full ouput This is the ogImg: "<<options.ogImg<<"\n"<<std::endl;
+	    if (options.verboseMode) {
+	    	std::cout<<"adding boxes on images...\n"<<std::endl;
+	    }
 	    std::string correctedFrame = frameDir + "/" + imgName + "_corrected.tif";
 	    std::string originalFrame = frameDir + "/" + imgName + "_original.tif";
 	    std::string bboxFrame = frameDir + "/" + imgName + "_bboxes.tif";
@@ -403,8 +405,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	    cv::imwrite(bboxFrame, imgBboxes);
 	    
 	    if (options.ogImg != "") {
-		std::cout<<"in the if statement\n"<<std::endl;
-		std::string originPlusBoxes = frameDir + "/" + options.ogImg + "_originPlusBoxes.png";
+		std::string originPlusBoxes = frameDir + "/" + options.ogImg;
 	    	cv::imwrite(originPlusBoxes, imgBboxes);
 	    }
 	   
