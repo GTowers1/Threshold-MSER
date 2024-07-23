@@ -288,8 +288,10 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	cv::Mat imgBboxes;
 	cv::cvtColor(imgCorrect, imgBboxes, cv::COLOR_GRAY2RGB);
 
+	cv::Mat colorBboxes;
+
 	if (options.ogImg != "") {
-		cv::Mat colorBboxes;
+		colorBboxes = cv::imread(options.ogImg);
 	}
 
 	int numBboxes = bboxes.size();
@@ -351,9 +353,10 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	cv::rectangle(imgBboxes, scaledBbox, cv::Scalar(255, 0, 0));
 	
 	if (options.ogImg != "") {
+		
+		cv::rectangle(colorBboxes, bboxes[k], cv::Scalar(0, 0, 255));
+	}
 	
-		cv::rectangle(colorBboxes, bboxes[k], cv::Scalar(0,0,255));
-	}	
 	
 	if (options.verboseModePlus) {
 		std::cout<<"===== Boxed Image =====\n"<<std::endl;
@@ -413,13 +416,13 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	    cv::imwrite(correctedFrame, imgCorrect);
 	    cv::imwrite(originalFrame, img);
 	    cv::imwrite(bboxFrame, imgBboxes);
-	    
-	    if (options.ogImg != "") {
 
-		std::string originPlusBoxes = frameDir + "/" + options.ogImg;//change this last part to the value of the other thing im making
-		//maybe a problem where imbBboxes is just the img and its writing that to the originPlusBoxes Directory
-	    	cv::imwrite(originPlusBoxes, colorBboxes);
+	    if (options.ogImg != "") {
+	    	std::string colorFrame = frameDir + "/" + options.ogImg;
+		cv::imwrite(colorFrame, colorBboxes);
 	    }
+	    
+
 	   
     }
 }
