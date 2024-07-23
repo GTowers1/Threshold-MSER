@@ -288,6 +288,10 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	cv::Mat imgBboxes;
 	cv::cvtColor(imgCorrect, imgBboxes, cv::COLOR_GRAY2RGB);
 
+	if (options.ogImg != "") {
+		cv::Mat colorBboxes;
+	}
+
 	int numBboxes = bboxes.size();
     for (int k=0; k<numBboxes; k++) {
         // Get measurement data
@@ -341,9 +345,15 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
         cv::Mat imgCropCorrect = cv::Mat(imgCorrect, scaledBbox & imgRect);
         cv::imwrite(correctImgFile, imgCropCorrect);
 
+	//GRANT :: could be this to write the rectangles on the origional image
 	// Draw the cropped frames on the image to be saved
 	cv::rectangle(imgBboxes, bboxes[k], cv::Scalar(0, 0, 255));
 	cv::rectangle(imgBboxes, scaledBbox, cv::Scalar(255, 0, 0));
+	
+	if (options.ogImg != "") {
+	
+		cv::rectangle(colorBboxes, bboxes[k], cv::Scalar(0,0,255));
+	}	
 	
 	if (options.verboseModePlus) {
 		std::cout<<"===== Boxed Image =====\n"<<std::endl;
@@ -405,8 +415,10 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	    cv::imwrite(bboxFrame, imgBboxes);
 	    
 	    if (options.ogImg != "") {
-		std::string originPlusBoxes = frameDir + "/" + options.ogImg;
-	    	cv::imwrite(originPlusBoxes, imgBboxes);
+
+		std::string originPlusBoxes = frameDir + "/" + options.ogImg;//change this last part to the value of the other thing im making
+		//maybe a problem where imbBboxes is just the img and its writing that to the originPlusBoxes Directory
+	    	cv::imwrite(originPlusBoxes, colorBboxes);
 	    }
 	   
     }

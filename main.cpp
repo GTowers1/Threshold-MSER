@@ -452,9 +452,9 @@ int main(int argc, char **argv) {
 	        cap.release();
         }
         else { // If the file is an image 
-	    	cv::Mat imgRaw = cv::imread(file.string());
+	    cv::Mat imgRaw = cv::imread(file.string());
             cv::Mat imgGray;
-	        cv::cvtColor(imgRaw, imgGray, cv::COLOR_RGB2GRAY);
+	    cv::cvtColor(imgRaw, imgGray, cv::COLOR_RGB2GRAY);
 
             if (imgGray.empty()) {
                 std::cerr << "Error reading the image file " << file.string() << std::endl;
