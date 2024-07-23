@@ -333,6 +333,7 @@ int main(int argc, char **argv) {
 		std::cout<<"full output    : "<<options.fullOutput<<"\n"<<std::endl;
 		std::cout<<"left           : "<<options.left<<"\n"<<std::endl;
 		std::cout<<"right          : "<<options.right<<"\n"<<std::endl;
+		std::cout<<"origin Image   : "<<options.ogImg<<"\n"<<std::endl;
 		std::cout<<"*************************************************\n\n"<<std::endl;
     }
 
