@@ -311,12 +311,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
         float height = bboxes[k].height;
         float width = bboxes[k].width;
 
-	//add a verbose ++ for the actual bb data maybe	
-	//if (options.verboseModePlus) {
 
-	//	std::cout<<""<<std::endl;
-	
-	//}	
         // Get mean pixel value for the crop
         cv::Mat imgCropUnscaled = cv::Mat(imgCorrect, bboxes[k] & imgRect);
         double mean = cv::sum(imgCropUnscaled)[0] / (height * width);
@@ -381,7 +376,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 
 	}
 
-
+	//JS method for converting to yolo format
 	//var centerX = (results3[j].X+(results3[j].W/2))/img_w;
 	//var centerY = (results3[j].Y+(results3[j].H/2))/img_h
 	//to_string_value = cnames.indexOf(results3[j].CName) +" "+centerX+" "+centerY+" "+results3[j].W/img_w +" "+results3[j].H/img_h +"\n"
@@ -395,6 +390,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	    	
 	    bboxPtr << x <<","<< y << ","<<height << ","<<width <<std::endl;
 
+	    //change the zero to be a class label identifier when that is needed GRANT
 	    yoloPtr << 0 << " " << (x + (width/2))/test_w <<" "<< (y + (height/2))/test_h << " "<<(width/test_w) << " "<<(height/test_h) <<std::endl;
         }
     }
@@ -407,7 +403,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 
     // Write full video frames to files
     if (options.fullOutput) {
-	    if (options.verboseMode) {
+	    if (options.verboseMode || options.verboseModePlus) {
 	    	std::cout<<"adding boxes on images...\n"<<std::endl;
 	    }
 	    std::string correctedFrame = frameDir + "/" + imgName + "_corrected.tif";

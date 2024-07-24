@@ -316,7 +316,7 @@ int main(int argc, char **argv) {
 
 
 
-    if (options.verboseMode) {
+    if (options.verboseMode || options.verboseModePlus) {
 
 		std::cout<<"*************************************************\n\n"<<std::endl;
 		std::cout<<"Segmenting Using These Values:\n"<<std::endl;
@@ -333,7 +333,7 @@ int main(int argc, char **argv) {
 		std::cout<<"full output    : "<<options.fullOutput<<"\n"<<std::endl;
 		std::cout<<"left           : "<<options.left<<"\n"<<std::endl;
 		std::cout<<"right          : "<<options.right<<"\n"<<std::endl;
-		std::cout<<"origin Image   : "<<options.ogImg<<"\n"<<std::endl;
+		std::cout<<"color Image    : "<<options.ogImg<<"\n"<<std::endl;
 		std::cout<<"*************************************************\n\n"<<std::endl;
     }
 
@@ -343,7 +343,7 @@ int main(int argc, char **argv) {
     fs::create_directory(measureDir);
 	std::string segmentDir = options.outputDirectory + "/segmentation";
     fs::create_directory(segmentDir);
- 	if (options.verboseMode) {
+ 	if (options.verboseMode || options.verboseModePlus) {
 		std::cout<<"Dir: "<<options.outputDirectory<<" Created\n"<<std::endl;
 		std::cout<<"Dir: "<<measureDir<<" Created\n"<<std::endl;
 		std::cout<<"Dir: "<<segmentDir<<" Created\n"<<std::endl;
@@ -386,7 +386,7 @@ int main(int argc, char **argv) {
 	std::ofstream bboxPtr(bboxSheet);
 	bboxPtr << "x, y, width, height" << std::endl;
 
-	//create csv for bounding box data
+	//create txt file for yolo format bbox data
 	std::string yoloFormatSheet = measureDir + "/" + fileName+"_yoloFormat.txt";
 	std::ofstream yoloPtr(yoloFormatSheet);
 	// yoloPtr << "class xcenter ycenter width height" << std::endl;
@@ -475,7 +475,7 @@ int main(int argc, char **argv) {
             cv::Mat imgCorrect;
             std::vector<cv::Rect> bboxes;
 	    
-	    if (options.verboseMode) {
+	    if (options.verboseMode || options.verboseModePlus) {
 	    	std::cout<<"Segmenting..."<<std::endl;
 	    }
             segmentImage(imgGray, imgCorrect, bboxes, options);
