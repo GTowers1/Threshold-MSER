@@ -382,7 +382,7 @@ int main(int argc, char **argv) {
         std::string fileName = file.stem();
 
 	//create csv for bounding box data
-	std::string bboxSheet = measureDir + "/" + fileName+"_bboxData.csv";
+	std::string bboxSheet = measureDir + "/" + fileName+"_bboxData.txt";
 	std::ofstream bboxPtr(bboxSheet);
 	//get rid of header so easier to read
 	//bboxPtr << "x, y, height, width" << std::endl;
