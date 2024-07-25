@@ -22,9 +22,7 @@ def read_file_and_store_in_db(img_name, db_name, txt_file):
     conn.close()
 
 if __name__ == '__main__':
-    if len(sys.argv) != 5:
-        print("Usage: python insertdb.py -d <dbfile> -i <imgfile>")
-        sys.exit(1)
+    
 
     db_name = None
     img_name = None
