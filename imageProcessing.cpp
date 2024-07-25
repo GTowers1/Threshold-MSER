@@ -366,13 +366,15 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 
 		std::cout<<"Perimeter: "<<perimeter<<"\n"<<std::endl;
 
-		std::cout<<"X: "<<x<<"\n"<<std::endl;
+		std::cout<<"X: "<<bboxes[k].x<<"\n"<<std::endl;
 
-		std::cout<<"Y: "<<y<<"\n"<<std::endl;
+		std::cout<<"Y: "<<bboxes[k].y<<"\n"<<std::endl;
 
 		std::cout<<"Mean: "<<mean<<"\n"<<std::endl;
 
-		std::cout<<"Height: "<<height<<"\n\n"<<std::endl;
+		std::cout<<"Height: "<<bboxes[k].height<<"\n\n"<<std::endl;
+
+		std::cout<<"Width: "<<bboxes[k].width<"\n\n"<<std::endl;
 
 	}
 
