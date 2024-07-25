@@ -36,7 +36,7 @@ if __name__ == '__main__':
         elif sys.argv[i] == '-t':
             txt_file = sys.argv[i+1]
 
-    if not db_name or not file_name or not txt_file:
+    if not db_name or not img_name or not txt_file:
         print("Usage: python insertdb.py -d <dbfile> -i <imgfile> -t <txtfile>")
         sys.exit(1)
 
