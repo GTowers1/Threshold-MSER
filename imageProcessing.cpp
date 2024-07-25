@@ -374,7 +374,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 
 		std::cout<<"Height: "<<bboxes[k].height<<"\n\n"<<std::endl;
 
-		std::cout<<"Width: "<<bboxes[k].width<"\n\n"<<std::endl;
+		std::cout<<"Width: "<<bboxes[k].width<<"\n\n"<<std::endl;
 
 	}
 
