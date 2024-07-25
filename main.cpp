@@ -385,7 +385,7 @@ int main(int argc, char **argv) {
 	std::string bboxSheet = measureDir + "/" + fileName+"_bboxData.txt";
 	std::ofstream bboxPtr(bboxSheet);
 	//get rid of header so easier to read
-	//bboxPtr << "x, y, height, width" << std::endl;
+	bboxPtr << "classname, x, y, width, height" << std::endl;
 
 	//create txt file for yolo format bbox data
 	std::string yoloFormatSheet = measureDir + "/" + fileName+"_yoloFormat.txt";
