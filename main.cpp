@@ -384,7 +384,7 @@ int main(int argc, char **argv) {
 	//create csv for bounding box data
 	std::string bboxSheet = measureDir + "/" + fileName+"_bboxData.csv";
 	std::ofstream bboxPtr(bboxSheet);
-	bboxPtr << "x, y, width, height" << std::endl;
+	bboxPtr << "x, y, height, width" << std::endl;
 
 	//create txt file for yolo format bbox data
 	std::string yoloFormatSheet = measureDir + "/" + fileName+"_yoloFormat.txt";
