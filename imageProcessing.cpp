@@ -390,7 +390,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
             measurePtr << correctImgFile << "," << area << "," << major << "," << minor << "," 
              << perimeter << "," << x << "," << y << "," << mean << "," << height << std::endl;
 	    	
-	    bboxPtr <<"pteropod "<< x <<" "<< y << " "<<height << " "<<width <<std::endl;
+	    bboxPtr <<"pteropod "<< x <<" "<< y << " "<<width << " "<<height <<std::endl;
 
 	    //change the zero to be a class label identifier when that is needed GRANT
 	    yoloPtr << 0 << " " << (x + (width/2))/test_w <<" "<< (y + (height/2))/test_h << " "<<(width/test_w) << " "<<(height/test_h) <<std::endl;
