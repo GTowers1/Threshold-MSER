@@ -5,17 +5,18 @@ import sys
 def insert_data(conn, data):
     cursor = conn.cursor()
     cursor.execute('''
-    INSERT INTO Labels (column1, column2, column3)
-    VALUES (?, ?, ?)
+    INSERT INTO Labels (CName, X, Y, W, H, IName)
+    VALUES (?, ?, ?, ?, ?, ?)
     ''', data)
     conn.commit()
 
-def read_file_and_store_in_db(filename, db_name):
+def read_file_and_store_in_db(img_name, db_name, txt_file):
     conn = sqlite3.connect(db_name)
 
-    with open(filename, 'r') as file:
+    with open(txt_file, 'r') as file:
         for line in file:
             data = line.strip().split(' ')
+            data.append(img_name)
             insert_data(conn, data)
 
     conn.close()
@@ -26,17 +27,20 @@ if __name__ == '__main__':
         sys.exit(1)
 
     db_name = None
-    file_name = None
+    img_name = None
+    txt_file = None
 
     for i in range(1, len(sys.argv)):
         if sys.argv[i] == '-d':
             db_name = sys.argv[i+1]
         elif sys.argv[i] == '-i':
-            file_name = sys.argv[i+1]
+            img_name = sys.argv[i+1]
+        elif sys.argv[i] == '-t':
+            txt_file = sys.argv[i+1]
 
-    if not db_name or not file_name:
-        print("Usage: python insertdb.py -d <dbfile> -i <imgfile>")
+    if not db_name or not file_name or not txt_file:
+        print("Usage: python insertdb.py -d <dbfile> -i <imgfile> -t <txtfile>")
         sys.exit(1)
 
-    read_file_and_store_in_db(file_name, db_name)
+    read_file_and_store_in_db(img_name, db_name, txt_file)
 
