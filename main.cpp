@@ -92,6 +92,9 @@ void helpMsg(std::string executable, Options options) {
 
         << std::left << std::setw(30) << "  -r, --right-crop" << "Crop this many pixels off of the right side of the image\n"
 
+	//maybe just have a script that runs the segmentation
+        //<< std::left << std::setw(30) << " -N, --njobvu" << "Create New NJobvu project with the values output from segmentaion (used in conjunction with the -O flag)\n"
+
         << std::left << std::setw(30) << "  -O, --origin-img" << "Include the origional image to be used for writing boxes on frame (used in conjunction with the -f flag)" << std::endl;
 
 }
@@ -338,17 +341,17 @@ int main(int argc, char **argv) {
     }
 
     // create output directories
-    fs::create_directory(options.outputDirectory);
-	std::string measureDir = options.outputDirectory + "/measurements";
-    fs::create_directory(measureDir);
-	std::string segmentDir = options.outputDirectory + "/segmentation";
-    fs::create_directory(segmentDir);
- 	if (options.verboseMode || options.verboseModePlus) {
-		std::cout<<"Dir: "<<options.outputDirectory<<" Created\n"<<std::endl;
-		std::cout<<"Dir: "<<measureDir<<" Created\n"<<std::endl;
-		std::cout<<"Dir: "<<segmentDir<<" Created\n"<<std::endl;
-			
-	}
+    //fs::create_directory(options.outputDirectory);
+//	std::string measureDir = options.outputDirectory + "/measurements";
+//    fs::create_directory(measureDir);
+//	std::string segmentDir = options.outputDirectory + "/segmentation";
+//    fs::create_directory(segmentDir);
+// 	if (options.verboseMode || options.verboseModePlus) {
+//		std::cout<<"Dir: "<<options.outputDirectory<<" Created\n"<<std::endl;
+//		std::cout<<"Dir: "<<measureDir<<" Created\n"<<std::endl;
+//		std::cout<<"Dir: "<<segmentDir<<" Created\n"<<std::endl;
+//			
+//	}
    
     // Create vector of video files from the input which can either be a directory 
     // or a single avi file.
@@ -378,8 +381,19 @@ int main(int argc, char **argv) {
     }
 
     for (int i=0; i<numFiles; i++) {
+	//CHRIS CODE add here
         fs::path file = files[i];
         std::string fileName = file.stem();
+
+	std::string measureDirBase = options.outputDirectory + "/" + fileName;
+	fs::create_directory(measureDirBase);
+	std::string measureDir = measureDirBase + "/measurements";
+	fs::create_directory(measureDir);
+
+	if (options.verboseMode) {
+		std::cout<<"Dir: "<<measureDirBase<<" Created\n"<<std::endl;
+		std::cout<<"Dir: "<<measureDir<<" Created\n"<<std::endl;
+	}
 
 	//create csv for bounding box data
 	std::string bboxSheet = measureDir + "/" + fileName+"_bboxData.txt";
@@ -422,6 +436,7 @@ int main(int argc, char **argv) {
             int totalFrames = cap.get(cv::CAP_PROP_FRAME_COUNT);
 
             #pragma omp parallel for
+			//CHRIS CODE add here
             for (int j=0; j<totalFrames-1; j++) 
             {   
 	        	cv::Mat imgGray;
@@ -433,8 +448,14 @@ int main(int argc, char **argv) {
                 }
 
                 std::string imgName = fileName + "_" + convertInt(image_stack_counter, 4);
-                std::string imgDir = segmentDir + "/" + fileName;
-                fs::create_directories(imgDir);
+		std::string segmentDir = options.outputDirectory + "/" + fileName;
+                fs::create_directory(segmentDir);
+		std::string imgDir = segmentDir + "/segmentation";
+		fs::create_directory(imgDir);
+
+		if(options.verboseMode){
+			std::cout<<"Dir: "<<imgDir<<" Created\n"<<std::endl;
+		}
 
                 int fill = fillSides(imgGray, options.left, options.right);
                 if (fill != 0) {
@@ -463,9 +484,13 @@ int main(int argc, char **argv) {
             }
             // TODO: Add the ability to concatenate frames like with videos
 
+	   //CHRIS CODE add here
             std::string imgName = fileName;
-            std::string imgDir = segmentDir + "/" + imgName;
-            fs::create_directories(imgDir);
+            //std::string imgDir = segmentDir + "/" + imgName;
+    	    std::string segmentDir = options.outputDirectory + "/" + fileName;
+            fs::create_directories(segmentDir);
+	    std::string imgDir = segmentDir + "/segmentation";
+	    fs::create_directories(imgDir);
 
             int fill = fillSides(imgGray, options.left, options.right);
             if (fill != 0) {
