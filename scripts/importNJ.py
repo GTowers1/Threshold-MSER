@@ -21,6 +21,7 @@ def read_file_and_store_in_db(project_path, db_name, txt_file):
             data = line.strip().split(' ')
             #add in the cpp file It is not like this on the main version(hpc)
             #data.append(img_name)
+            data.append("092419RR05zoomed.png")
             insert_data(conn, data)
 
     conn.close()
@@ -59,7 +60,7 @@ def create_project(db_name, txt_file, nj_path):
     # Points to path where project needs to be placed
 
     # Inserts the project dir
-    project_path = os.path.join(nj_path, db_name)
+    project_path = os.path.join(nj_path,"public/projects", db_name)
 
     if not os.path.exists(project_path):
         os.makedirs(project_path)
