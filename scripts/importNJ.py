@@ -13,8 +13,8 @@ def insert_data(conn, data):
         ''', data)
     conn.commit()
 
-def read_file_and_store_in_db(db_name, txt_file):
-    conn = sqlite3.connect(db_name)
+def read_file_and_store_in_db(project_path, db_name, txt_file):
+    conn = sqlite3.connect(os.path.join(project_path, f'{db_name}.db'))
 
     with open(txt_file, 'r') as file:
         for line in file:
@@ -58,8 +58,6 @@ def create_project(db_name, txt_file, nj_path):
 
     # Points to path where project needs to be placed
 
-    nj_path = "../Njobvu-AI/public/projects"
-
     # Inserts the project dir
     project_path = os.path.join(nj_path, db_name)
 
@@ -95,20 +93,20 @@ def create_project(db_name, txt_file, nj_path):
     CREATE TABLE Validation (Confidence INTEGER NOT NULL, LID INTEGER NOT NULL PRIMARY KEY, CName VARCHAR NOT NULL, IName VARCHAR NOT NULL, FOREIGN KEY(LID) REFERENCES Labels(LID), FOREIGN KEY(IName) REFERENCES Images(IName), FOREIGN KEY(CName) REFERENCES Classes(CName))
     ''')
 
-    read_file_and_store_in_db(db_name, txt_file)
+    read_file_and_store_in_db(project_path, db_name, txt_file)
 
 if __name__ == '__main__':
 
     db_name = None
     img_name = None
     txt_file = None
-    nj_decision = "new"
+    nj_decision = None
     nj_path = None
 
 
     for i in range(1, len(sys.argv)):
         if sys.argv[i] == '-n':
-            if sys.argv[i + 1] != "new" or "existing":
+            if sys.argv[i + 1] != ("new" or "existing"):
                 print("error in -n flag input: required input = 'new' or 'existing'\n")
             else:
                 nj_decision = sys.argv[i+1]
