@@ -389,9 +389,15 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
         {
             measurePtr << correctImgFile << "," << area << "," << major << "," << minor << "," 
              << perimeter << "," << x << "," << y << "," << mean << "," << height << std::endl;
-	    	
-	    bboxPtr <<"pteropod "<< x <<" "<< y << " "<<width << " "<<height <<std::endl;
-
+	    if (options.ogImg != "") {
+		fs::path filePath(options.ogImg);
+	   	fs::path filename = filePath.filename(); 
+	    	bboxPtr <<"pteropod "<< x <<" "<< y << " "<<width << " "<<height <<" "<<filename<<std::endl;
+	    }else{ 
+	
+	    //add either an option for class label or maybe something based on filename GRANT
+	    	bboxPtr <<"pteropod "<< x <<" "<< y << " "<<width << " "<<height <<std::endl;
+	    }
 	    //change the zero to be a class label identifier when that is needed GRANT
 	    yoloPtr << 0 << " " << (x + (width/2))/test_w <<" "<< (y + (height/2))/test_h << " "<<(width/test_w) << " "<<(height/test_h) <<std::endl;
         }

@@ -95,7 +95,7 @@ void helpMsg(std::string executable, Options options) {
 	//maybe just have a script that runs the segmentation
         //<< std::left << std::setw(30) << " -N, --njobvu" << "Create New NJobvu project with the values output from segmentaion (used in conjunction with the -O flag)\n"
 
-        << std::left << std::setw(30) << "  -O, --origin-img" << "Include the origional image to be used for writing boxes on frame (used in conjunction with the -f flag)" << std::endl;
+        << std::left << std::setw(30) << "  -O, --origin-img" << "Include the origional image to be used for writing boxes on frame(used if you want to export data to Njobvu) or (used in conjunction with the -f flag if you want to write boxes on the original image" << std::endl;
 
 }
 
