@@ -1,4 +1,5 @@
 import sqlite3
+import shutil
 import sys
 import os
 
@@ -13,14 +14,16 @@ def insert_data(conn, data):
         ''', data)
     conn.commit()
 
-def read_file_and_store_in_db(project_path, db_name, txt_file):
+def read_file_and_store_in_db(project_path, db_name, txt_file, class_label):
     conn = sqlite3.connect(os.path.join(project_path, f'{db_name}.db'))
 
     with open(txt_file, 'r') as file:
         for line in file:
             data = line.strip().split(' ')
             #add in the cpp file It is not like this on the main version(hpc)
+            #data.append(class_label) have user use a flag for this
             #data.append(img_name)
+            data.insert(0, class_label)
             insert_data(conn, data)
 
     conn.close()
@@ -50,13 +53,9 @@ def findNjProject(nj_project, nj_path):
         return ""
 
 
-def create_project(db_name, txt_file, nj_path):
+def create_project(db_name, txt_file, nj_path, class_label, img_name):
 
-    # Creates the project dir
-    # use cmd to cp og img from input path to the images dir
-    #update this to put it all under a public/project tab in njobvu using the nj_path var TANISH (DONE)
 
-    # Points to path where project needs to be placed
 
     # Inserts the project dir
     project_path = os.path.join(nj_path,"public/projects", db_name)
@@ -67,6 +66,10 @@ def create_project(db_name, txt_file, nj_path):
     os.makedirs(os.path.join(project_path, 'bootstrap'))
     os.makedirs(os.path.join(project_path, 'images'))
     os.makedirs(os.path.join(project_path, 'Training'))
+
+    file_to_copy = img_name
+    destination_dir = nj_path + "/public/projects/" + db_name +"/images"
+    shutil.copy(file_to_copy, destination_dir)
 
     conn = sqlite3.connect(os.path.join(project_path, f'{db_name}.db'))
     conn.close()
@@ -80,7 +83,13 @@ def create_project(db_name, txt_file, nj_path):
     cursor.execute('''
     CREATE TABLE Classes (CName VARCHAR NOT NULL PRIMARY KEY)
     ''')
-
+    print("before first insert"+ class_label+ "\n\n")
+    cursor.execute('''
+    INSERT INTO Classes (CName)
+    VALUES (?)
+    ''',(class_label,))
+    conn.commit()
+ 
     cursor.execute('''
     CREATE TABLE Images (IName VARCHAR NOT NULL PRIMARY KEY, reviewImage INTEGER NOT NULL DEFAULT 0, validateImage INTEGER NOT NULL DEFAULT 0)
     ''')
@@ -92,8 +101,14 @@ def create_project(db_name, txt_file, nj_path):
     cursor.execute('''
     CREATE TABLE Validation (Confidence INTEGER NOT NULL, LID INTEGER NOT NULL PRIMARY KEY, CName VARCHAR NOT NULL, IName VARCHAR NOT NULL, FOREIGN KEY(LID) REFERENCES Labels(LID), FOREIGN KEY(IName) REFERENCES Images(IName), FOREIGN KEY(CName) REFERENCES Classes(CName))
     ''')
-
-    read_file_and_store_in_db(project_path, db_name, txt_file)
+    print("made it before second insert\n")
+    cursor.execute('''
+    INSERT INTO Images (IName, reviewImage, validateImage)
+    VALUES (?,?,?)
+   ''',(img_name, 0, 0))
+    conn.commit()
+    read_file_and_store_in_db(project_path, db_name, txt_file, class_label)
+    #Copy the image to the images folder
 
 if __name__ == '__main__':
 
@@ -102,7 +117,7 @@ if __name__ == '__main__':
     txt_file = None
     nj_decision = None
     nj_path = None
-
+    class_label = None
 
     for i in range(1, len(sys.argv)):
         if sys.argv[i] == '-n':
@@ -118,14 +133,23 @@ if __name__ == '__main__':
             nj_path = sys.argv[i+1]
         elif sys.argv[i] == '-h':
             help_msg()
+        elif sys.argv[i] == '-c':
+            class_label = sys.argv[i+1]
 
     if nj_decision == "new":
         db_name = input("Enter the name of the project: ")
-        create_project(db_name, txt_file, nj_path)
+        create_project(db_name, txt_file, nj_path, class_label,img_name)
 
 
     elif nj_decision == "existing":
+	nj_userName = input("Enter your Njobvu UserName: \n")
         nj_project = input("Enter the name of your existing Njobvu project: ")
-        result = findNjProject(nj_project,nj_path)
+        result = findNjProject(nj_project,nj_path, nj_userName)
         if result != "":
             read_file_and_store_in_db(result, txt_file)
+        if img_name != None:
+            file_to_copy = img_name
+            destination_dir = nj_path + "public/projects/" + db_name +"/images"
+            shutil.copy(file_to_copy, destination_dir)
+
+
