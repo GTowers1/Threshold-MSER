@@ -119,9 +119,6 @@ if __name__ == '__main__':
             nj_path = sys.argv[i+1]
         elif sys.argv[i] == '-h':
             help_msg()
-        else:
-            print("that was not one of the options these are all the options\n\n")
-            help_msg()
 
     if nj_decision == "new":
         db_name = input("Enter the name of the project: ")
