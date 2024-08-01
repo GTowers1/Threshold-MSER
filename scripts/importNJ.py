@@ -21,7 +21,6 @@ def read_file_and_store_in_db(project_path, db_name, txt_file):
             data = line.strip().split(' ')
             #add in the cpp file It is not like this on the main version(hpc)
             #data.append(img_name)
-            data.append("092419RR05zoomed.png")
             insert_data(conn, data)
 
     conn.close()
