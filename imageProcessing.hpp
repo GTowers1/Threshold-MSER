@@ -7,6 +7,7 @@
  *  Moritz S. Schmid
  *  Christopher M. Sullivan
  *  Robert K. Cowen
+ *  Grant A. Towers
  *
  *  Hatfield Marine Science Center
  *  Center for Qualitative Life Sciences
@@ -90,6 +91,7 @@ struct Options
     bool verboseMode;
     bool verboseModePlus;
     std::string ogImg;
+    bool pipeline;
 };
 
 
@@ -276,6 +278,6 @@ void segmentImage(const cv::Mat& img, cv::Mat& imgCorrect,
  */
 void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, 
         std::vector<cv::Rect>& bboxes, std::string imgDir, 
-        std::string imgName, std::ofstream& measurePtr, Options options, std::ofstream& bboxPtr, std::ofstream& yoloPtr);
+        std::string imgName, std::ofstream& measurePtr, Options options, std::ofstream& bboxPtr, std::ofstream& yoloPtr, std::string colorImages);
 
 #endif

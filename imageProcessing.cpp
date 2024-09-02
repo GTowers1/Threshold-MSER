@@ -7,6 +7,7 @@
  *  Moritz S. Schmid
  *  Christopher M. Sullivan
  *  Robert K. Cowen
+ *  Grant A. Towers
  *
  *  Hatfield Marine Science Center
  *  Center for Qualitative Life Sciences
@@ -269,7 +270,7 @@ void contourBbox(const cv::Mat& img, std::vector<cv::Rect>& bboxes, int threshol
 }
 
 
-void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Rect>& bboxes, std::string imgDir, std::string imgName, std::ofstream& measurePtr, Options options, std::ofstream& bboxPtr, std::ofstream& yoloPtr) {
+void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Rect>& bboxes, std::string imgDir, std::string imgName, std::ofstream& measurePtr, Options options, std::ofstream& bboxPtr, std::ofstream& yoloPtr, std::string colorImages) {
     cv::Rect imgRect(0, 0, imgCorrect.cols, imgCorrect.rows); // use imgRect to make sure box doesn't go off the edge
 
 	// Create crop directories
@@ -278,7 +279,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
     int test_w = img.cols;
     int test_h = img.rows;
 
-	
+	std::cout<<imgDir<<std::endl;
     fs::create_directory(correctCropDir);
     if ( options.fullOutput ) {
         fs::create_directory(frameDir);
@@ -290,6 +291,7 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 
 	cv::Mat colorBboxes;
 
+	//need to fix this change to handle new format of taking each og img at a time GRANT!!
 	if (options.ogImg != "") {
 		colorBboxes = cv::imread(options.ogImg);
 	}
@@ -310,7 +312,30 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
         float minor;
         float height = bboxes[k].height;
         float width = bboxes[k].width;
+	
+	std::vector<fs::path> color_files;
+	if (fs::is_directory(options.ogImg)){
+		for(auto& p: fs::directory_iterator{options.ogImg}){
 
+			fs::path file(p);
+			std::string ext = file.extension();
+			std::string valid_ext[] = {".png", ".tif", ".jpg",".jpeg"};
+			int len = sizeof(valid_ext)/sizeof(valid_ext[0]);
+			if (!containExt(ext, valid_ext, len)){
+				continue;
+			}
+			color_files.push_back(file);
+		}
+	}
+	else{
+		color_files.push_back(fs::path(options.ogImg));
+	}
+	int numColorFiles = color_files.size();
+	if (numColorFiles < 1){
+		if(options.verboseMode){
+			std::cout<<"no original images found"<<std::endl;
+		}
+	}
 
         // Get mean pixel value for the crop
         cv::Mat imgCropUnscaled = cv::Mat(imgCorrect, bboxes[k] & imgRect);
@@ -333,7 +358,6 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
         if ( area < options.minArea || area > options.maxArea )
             continue;
 
-	//grant maybe this is what is getting the weird value
         // Re-scale the crop of the image after getting the measurement data written to a file
         cv::Rect scaledBbox = rescaleRect(bboxes[k], 1.2);
 
@@ -342,7 +366,6 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
         cv::Mat imgCropCorrect = cv::Mat(imgCorrect, scaledBbox & imgRect);
         cv::imwrite(correctImgFile, imgCropCorrect);
 
-	//GRANT :: could be this to write the rectangles on the origional image
 	// Draw the cropped frames on the image to be saved
 	cv::rectangle(imgBboxes, bboxes[k], cv::Scalar(0, 0, 255));
 	cv::rectangle(imgBboxes, scaledBbox, cv::Scalar(255, 0, 0));
@@ -389,14 +412,12 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
         {
             measurePtr << correctImgFile << "," << area << "," << major << "," << minor << "," 
              << perimeter << "," << x << "," << y << "," << mean << "," << height << std::endl;
-	    if (options.ogImg != "") {
-		fs::path filePath(options.ogImg);
-	   	fs::path filename = filePath.filename(); 
-	    	bboxPtr <<"pteropod "<< x <<" "<< y << " "<<width << " "<<height <<" "<<filename<<std::endl;
-	    }else{ 
+	    if (colorImages != "") {
+	    	bboxPtr << x <<" "<< y << " "<<width << " "<<height <<" "<<colorImages<<std::endl;
+	    }else{
 	
 	    //add either an option for class label or maybe something based on filename GRANT
-	    	bboxPtr <<"pteropod "<< x <<" "<< y << " "<<width << " "<<height <<std::endl;
+	    	bboxPtr << x <<" "<< y << " "<<width << " "<<height <<std::endl;
 	    }
 	    //change the zero to be a class label identifier when that is needed GRANT
 	    yoloPtr << 0 << " " << (x + (width/2))/test_w <<" "<< (y + (height/2))/test_h << " "<<(width/test_w) << " "<<(height/test_h) <<std::endl;

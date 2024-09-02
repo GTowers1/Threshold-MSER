@@ -7,6 +7,7 @@
  *  Moritz S. Schmid
  *  Christopher M. Sullivan
  *  Robert K. Cowen
+ *  Grant A. Towers
  *
  *  Hatfield Marine Science Center
  *  Center for Qualitative Life Sciences
@@ -28,6 +29,9 @@
  *
  */ 
 
+
+//GRANT NEED TO FIX PROBLEM WHERE THE IMG NAME IS INCORRECT DUE TO TRUNCATING THE FILE EXT
+//TODO Currently working on changing file structure to better fit the pipeline model while keeping what chris made changes too as a flag
 #include <iostream>
 #include <fstream> // write output csv files
 #include <iomanip>  // For the function std::setw
@@ -92,6 +96,9 @@ void helpMsg(std::string executable, Options options) {
 
         << std::left << std::setw(30) << "  -r, --right-crop" << "Crop this many pixels off of the right side of the image\n"
 
+        << std::left << std::setw(30) << "  -pip, --pipeline" << "Used to change how the files are saved to better work with the pipeline\n"
+        << std::left << std::setw(30) << "" <<  "(Default: " << options.pipeline<< ")\n" 
+
 	//maybe just have a script that runs the segmentation
         //<< std::left << std::setw(30) << " -N, --njobvu" << "Create New NJobvu project with the values output from segmentaion (used in conjunction with the -O flag)\n"
 
@@ -120,6 +127,7 @@ int main(int argc, char **argv) {
     options.verboseMode = false;
     options.verboseModePlus = false;
     options.ogImg = "";
+    options.pipeline= true;
 
     // TODO: more robust options with std::find may be worth it
     if (argc == 1) {
@@ -303,6 +311,14 @@ int main(int argc, char **argv) {
             		}
             		i+=2;
         	} 
+		else if (strcmp(argv[i], "-pip") == 0 || strcmp(argv[i], "--pipeline")==0){
+			if(strcmp(argv[i+1],"true")==0){
+				options.pipeline = true;
+			}
+			else{
+				options.pipeline = false;
+			}
+		}
 		else {
             		// Display invalid option message
             		std::cerr << argv[0] << ": invalid option \'" << argv[i] << "\'" <<
@@ -337,24 +353,56 @@ int main(int argc, char **argv) {
 		std::cout<<"left           : "<<options.left<<"\n"<<std::endl;
 		std::cout<<"right          : "<<options.right<<"\n"<<std::endl;
 		std::cout<<"color Image    : "<<options.ogImg<<"\n"<<std::endl;
+		std::cout<<"pipeline       : "<<options.pipeline<<"\n"<<std::endl;
 		std::cout<<"*************************************************\n\n"<<std::endl;
     }
 
-    // create output directories
-    //fs::create_directory(options.outputDirectory);
-//	std::string measureDir = options.outputDirectory + "/measurements";
-//    fs::create_directory(measureDir);
-//	std::string segmentDir = options.outputDirectory + "/segmentation";
-//    fs::create_directory(segmentDir);
-// 	if (options.verboseMode || options.verboseModePlus) {
-//		std::cout<<"Dir: "<<options.outputDirectory<<" Created\n"<<std::endl;
-//		std::cout<<"Dir: "<<measureDir<<" Created\n"<<std::endl;
-//		std::cout<<"Dir: "<<segmentDir<<" Created\n"<<std::endl;
-//			
-//	}
-   
+	std::string measureDir;
+	std::string segmentDir;
+	std::string imgDir;
+	if(options.pipeline){
+    		// create output directories
+		fs::create_directory(options.outputDirectory);
+		measureDir = options.outputDirectory + "/measurements";
+		fs::create_directory(measureDir);
+		segmentDir = options.outputDirectory + "/segmentation";
+		fs::create_directory(segmentDir);
+ 		if (options.verboseMode || options.verboseModePlus) {
+			std::cout<<"Dir: "<<options.outputDirectory<<" Created\n"<<std::endl;
+			std::cout<<"Dir: "<<measureDir<<" Created\n"<<std::endl;
+			std::cout<<"Dir: "<<segmentDir<<" Created\n"<<std::endl;
+			
+		}
+	}
     // Create vector of video files from the input which can either be a directory 
     // or a single avi file.
+
+	std::vector<fs::path> color_files;
+	if (fs::is_directory(options.ogImg)){
+		for(auto& p: fs::directory_iterator{options.ogImg}){
+
+			fs::path file(p);
+			std::string ext = file.extension();
+			std::string valid_ext[] = {".png", ".tif", ".jpg",".jpeg"};
+			int len = sizeof(valid_ext)/sizeof(valid_ext[0]);
+			if (!containExt(ext, valid_ext, len)){
+				continue;
+			}
+			color_files.push_back(file);
+		}
+	}
+	else{
+		color_files.push_back(fs::path(options.ogImg));
+	}
+	int numColorFiles = color_files.size();
+	if (numColorFiles < 1){
+		if(options.verboseMode){
+			std::cout<<"no original images found"<<std::endl;
+		}
+	}
+
+
+
     std::vector<fs::path> files;
     if (fs::is_directory(options.input)) {
         for(auto& p: fs::directory_iterator{options.input}) {
@@ -383,17 +431,22 @@ int main(int argc, char **argv) {
     for (int i=0; i<numFiles; i++) {
 	//CHRIS CODE add here
         fs::path file = files[i];
+	fs::path color_file = color_files[i];
+	std::string color_file_name = color_file.filename().string();
         std::string fileName = file.stem();
+	std::string imgName;
+	
+	if(options.pipeline == false){
+		std::string measureDirBase = options.outputDirectory + "/" + fileName;
+		fs::create_directory(measureDirBase);
+		measureDir = measureDirBase + "/measurements";
+		fs::create_directory(measureDir);
 
-	std::string measureDirBase = options.outputDirectory + "/" + fileName;
-	fs::create_directory(measureDirBase);
-	std::string measureDir = measureDirBase + "/measurements";
-	fs::create_directory(measureDir);
-
-	if (options.verboseMode) {
-		std::cout<<"Dir: "<<measureDirBase<<" Created\n"<<std::endl;
-		std::cout<<"Dir: "<<measureDir<<" Created\n"<<std::endl;
-	}
+		if (options.verboseMode) {
+			std::cout<<"Dir: "<<measureDirBase<<" Created\n"<<std::endl;
+			std::cout<<"Dir: "<<measureDir<<" Created\n"<<std::endl;
+		}
+    	}
 
 	//create csv for bounding box data
 	std::string bboxSheet = measureDir + "/" + fileName+"_bboxData.txt";
@@ -446,13 +499,20 @@ int main(int argc, char **argv) {
                     image_stack_counter += options.numConcatenate;
                     j += options.numConcatenate - 1;
                 }
+		
+		if(options.pipeline == false){
+                	imgName = fileName + "_" + convertInt(image_stack_counter, 4);
+			segmentDir = options.outputDirectory + "/" + fileName;
+                	fs::create_directory(segmentDir);
+			imgDir = segmentDir + "/segmentation";
+			fs::create_directory(imgDir);
+		}
+		else{
+			imgName = fileName + '_' + convertInt(image_stack_counter, 4);
+			imgDir = segmentDir + "/" + fileName;
 
-                std::string imgName = fileName + "_" + convertInt(image_stack_counter, 4);
-		std::string segmentDir = options.outputDirectory + "/" + fileName;
-                fs::create_directory(segmentDir);
-		std::string imgDir = segmentDir + "/segmentation";
-		fs::create_directory(imgDir);
-
+			fs::create_directory(imgDir);
+		}
 		if(options.verboseMode){
 			std::cout<<"Dir: "<<imgDir<<" Created\n"<<std::endl;
 		}
@@ -465,7 +525,12 @@ int main(int argc, char **argv) {
                 cv::Mat imgCorrect;
                 std::vector<cv::Rect> bboxes;
                 segmentImage(imgGray, imgCorrect, bboxes, options);
-                saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options, bboxPtr, yoloPtr);
+		if(options.ogImg != ""){
+                	saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options, bboxPtr, yoloPtr, color_file_name);
+		}
+		else{
+                	saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options, bboxPtr, yoloPtr, "");
+		}
 
                 imgGray.release();
                 imgCorrect.release();
@@ -485,13 +550,24 @@ int main(int argc, char **argv) {
             // TODO: Add the ability to concatenate frames like with videos
 
 	   //CHRIS CODE add here
-            std::string imgName = fileName;
-            //std::string imgDir = segmentDir + "/" + imgName;
-    	    std::string segmentDir = options.outputDirectory + "/" + fileName;
-            fs::create_directories(segmentDir);
-	    std::string imgDir = segmentDir + "/segmentation";
-	    fs::create_directories(imgDir);
 
+	    if(options.pipeline == false){
+            	std::string imgName = fileName;
+            	//std::string imgDir = segmentDir + "/" + imgName;
+    	    	std::string segmentDir = options.outputDirectory + "/" + fileName;
+            	fs::create_directories(segmentDir);
+	    	imgDir = segmentDir + "/segmentation";
+	    	fs::create_directories(imgDir);
+
+	    }
+	    else{
+		std::cout<<"segmentDir: "<<segmentDir<<"\n"<<std::endl;
+		std::cout<<"fileName: "<<fileName<<"\n"<<std::endl;
+		std::string imgName = fileName;
+		imgDir = segmentDir + "/" + imgName;
+		std::cout<<"ImgDir: "<<imgDir<<"\n"<<std::endl;
+		fs::create_directories(imgDir);
+	    }
             int fill = fillSides(imgGray, options.left, options.right);
             if (fill != 0) {
                 exit( 1 );
@@ -505,8 +581,21 @@ int main(int argc, char **argv) {
 	    	std::cout<<"Segmenting..."<<std::endl;
 	    }
             segmentImage(imgGray, imgCorrect, bboxes, options);
-            saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options, bboxPtr, yoloPtr);
+	    std::cout<<imgDir<<" idir\n"<<std::endl;
+		if(options.ogImg != ""){
 
+			std::cout<<"this is right before the saveCrops call\n"<<std::endl;
+			std::cout<<imgDir<<"\n"<<std::endl;
+			std::cout<<"img dir supposed to be before this\n"<<std::endl;
+                	saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options, bboxPtr, yoloPtr, color_file_name);
+		}
+		else{
+			
+			std::cout<<"this is right before the saveCrops call\n"<<std::endl;
+			std::cout<<imgDir<<"\n"<<std::endl;
+			std::cout<<"img dir supposed to be before this\n"<<std::endl;
+                	saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options, bboxPtr, yoloPtr, "");
+		}
             imgRaw.release();
             imgGray.release();
             imgCorrect.release();
