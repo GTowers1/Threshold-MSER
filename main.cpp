@@ -451,13 +451,9 @@ int main(int argc, char **argv) {
 	//create csv for bounding box data
 	std::string bboxSheet = measureDir + "/" + fileName+"_bboxData.txt";
 	std::ofstream bboxPtr(bboxSheet);
-	//get rid of header so easier to read
-	//bboxPtr << "classname, x, y, width, height" << std::endl;
-
 	//create txt file for yolo format bbox data
 	std::string yoloFormatSheet = measureDir + "/" + fileName+"_yoloFormat.txt";
 	std::ofstream yoloPtr(yoloFormatSheet);
-	// yoloPtr << "class xcenter ycenter width height" << std::endl;
 
         // Create a measurement file to save crop info to
         std::string measureFile = measureDir + "/" + fileName + ".csv";
@@ -584,16 +580,10 @@ int main(int argc, char **argv) {
 	    std::cout<<imgDir<<" idir\n"<<std::endl;
 		if(options.ogImg != ""){
 
-			std::cout<<"this is right before the saveCrops call\n"<<std::endl;
-			std::cout<<imgDir<<"\n"<<std::endl;
-			std::cout<<"img dir supposed to be before this\n"<<std::endl;
                 	saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options, bboxPtr, yoloPtr, color_file_name);
 		}
 		else{
 			
-			std::cout<<"this is right before the saveCrops call\n"<<std::endl;
-			std::cout<<imgDir<<"\n"<<std::endl;
-			std::cout<<"img dir supposed to be before this\n"<<std::endl;
                 	saveCrops(imgGray, imgCorrect, bboxes, imgDir, imgName, measurePtr, options, bboxPtr, yoloPtr, "");
 		}
             imgRaw.release();
