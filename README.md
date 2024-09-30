@@ -1,12 +1,13 @@
 ## Threshold MSER In Situ Plankton Segmentation
 
-Copyright © 2022 Oregon State University
+Copyright © 2024 Oregon State University
 
 Dominic W. Daprano
 Sheng Tse Tsai
 Moritz S. Schmid
 Christopher M. Sullivan
 Robert K. Cowen
+Grant A. Towers
 
 Hatfield Marine Science Center
 Center for Qualitative Life Sciences
@@ -53,6 +54,35 @@ Now the binary can be run.
 
 ```
 ./segment --help
+
+Expected Output:
+  -V, --verbose               Enable Verbose Mode (Default: 0)
+  -VV, --verbosePlus          Enable VerbosePlus Mode [More VERBOSE] (Default: 0)
+  -i, --input                 Directory of video files to segment
+  -o, --output-directory      Output directory where segmented images should be stored (Default: out)
+  -n, --num-concatenate       The number of frames that will be vertically concatenated (Default: 1)
+  -s, --signal-to-noise       The cutoff signal to noise ratio that is used in determining which frames from
+                              the video file get segmented. Note: This will change as we change the outlier percent (Default: 60)
+  -p, --outlier-percent       Percentage of darkest and lightest pixels to throw out before flat-fielding (Default: 0.15)
+  -M, --maxArea               Maximum area of a segmented blob (Default: 400000)
+  -m, --minArea               Minimum area of a segmented blob. (Default: 50)
+  -d, --delta                 Delta is a parameter for MSER. Delta is the number of steps (changes
+                              in pixel brightness) MSER uses to compare the size of connected regions.
+                              A smaller delta will produce more segments. (Default: 4)
+  -v, --variation             Maximum variation of the region's area between delta threshold.
+                              Larger values lead to more segments. (Default: 100)
+  -e, --epsilon               Float between 0 and 1 that represents the maximum overlap between
+                              two rectangle bounding boxes. 0 means that any overlap will mean
+                              that the bounding boxes are treated as the same. (Default: 1)
+  -t, --threshold             Value to threshold the images for low signal to noise images 
+                              (Default: 160)
+  -f, --full-ouput            If flag is included a directory of full frames is added to output
+  -l, --left-crop             Crop this many pixels off of the left side of the image
+  -r, --right-crop            Crop this many pixels off of the right side of the image
+  -pip, --pipeline            Used to change how the files are saved to better work with the pipeline
+                              (Default: 1)
+  -O, --origin-img            Include the origional image to be used for writing boxes on frame(used if you want to export data to Njobvu) or (used in conjunction with the -f flag if you want to write boxes on the original image
+
 ```
 
 ####  Build Options
@@ -81,3 +111,4 @@ directory containing video files, a path to a video file, or a path to a folder 
 The segments that are produced can be controlled through several parameters. Most
 notably, the --minium and --maximum paraters control the minimum and 
 maximum size of a crop that can be extracted from a frame.
+
