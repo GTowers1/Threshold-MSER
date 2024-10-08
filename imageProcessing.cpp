@@ -48,6 +48,18 @@
 
 #include <chrono> // timer
 
+//GRANT I need to use open CV library to first define a range of pixels im looking for
+//the create a mask then in that image use the upper and lower bound with the img and mask
+//// Define the RGB range
+    //cv::Scalar lowerBound(100, 100, 100); // Lower bound (B, G, R)
+	//cv::Scalar upperBound(255, 255, 255); // Upper bound (B, G, R)
+
+    // Create a mask for the specified range
+    //cv::Mat mask;
+    //cv::inRange(image, lowerBound, upperBound, mask);
+
+    // Count the non-zero pixels in the mask
+    //int pixelCount = cv::countNonZero(mask);
 namespace fs = std::filesystem;
 
 bool containExt(const std::string s, std::string arr[], int len) {
@@ -279,7 +291,18 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
     int test_w = img.cols;
     int test_h = img.rows;
 
-	std::cout<<imgDir<<std::endl;
+    //get total pixels, set ranges, make a mask on the img based on the upper and lower bounds and then get the count
+    int total_pixels = img.cols + img.rows;
+    cv::Scalar lowerbound(R_min, G_min, B_min);
+    cv::Scalar upperbound(R_max, G_max, B_max);
+    cv::Mat mask;
+    cv::inRange(img, lowerbound, upperbound, mask);
+    int countRange = cv::countNonZero(mask);
+
+    std::cout<<"total pixels: "<<total_pixels<<"\n"<<std::endl;
+    std::cout<<"total in range: "<<countRange<<"\n"<<std::endl;
+
+
     fs::create_directory(correctCropDir);
     if ( options.fullOutput ) {
         fs::create_directory(frameDir);
@@ -417,7 +440,13 @@ void saveCrops(const cv::Mat& img, const cv::Mat& imgCorrect, std::vector<cv::Re
 	    }else{
 	
 	    //add either an option for class label or maybe something based on filename GRANT
-	    	bboxPtr << x <<" "<< y << " "<<width << " "<<height <<std::endl;
+	    	if(options.fullOutput){
+	    		bboxPtr << x <<" "<< y << " "<<width << " "<<height <<" "<<imgName<<std::endl;
+		}
+		else{
+		
+	    		bboxPtr << x <<" "<< y << " "<<width << " "<<height <<std::endl;
+		}
 	    }
 	    //change the zero to be a class label identifier when that is needed GRANT
 	    yoloPtr << 0 << " " << (x + (width/2))/test_w <<" "<< (y + (height/2))/test_h << " "<<(width/test_w) << " "<<(height/test_h) <<std::endl;
